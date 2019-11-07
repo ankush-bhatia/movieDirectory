@@ -89,3 +89,28 @@ class MovieData {
 
   int get vote_count => _vote_count;
 }
+
+class TotalItemsModel {
+  List<int> _page = [];
+  int _total_results;
+  int _total_pages;
+  List<MovieData> _results = [];
+
+  List<int> get page => _page;
+
+  int get total_results => _total_results;
+
+  int get total_pages => _total_pages;
+
+  List<MovieData> get results => _results;
+
+  set total_pages(int value) {
+    _total_pages = value;
+  }
+
+  set total_results(int value) {
+    _total_results = value;
+  }
+
+
+}

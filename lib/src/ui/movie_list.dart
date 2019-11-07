@@ -46,7 +46,7 @@ class MovieListState extends State<MovieList> {
       ),
       body: StreamBuilder(
         stream: bloc.allMovies,
-        builder: (context, AsyncSnapshot<ItemModel> snapshot) {
+        builder: (context, AsyncSnapshot<TotalItemsModel> snapshot) {
           if (snapshot.hasData) {
             return buildList(snapshot);
           } else if (snapshot.hasError) {
@@ -58,7 +58,7 @@ class MovieListState extends State<MovieList> {
     );
   }
 
-  Widget buildList(AsyncSnapshot<ItemModel> snapshot) {
+  Widget buildList(AsyncSnapshot<TotalItemsModel> snapshot) {
     return GridView.builder(
         controller: _controller,
         itemCount: snapshot.data.results.length,
