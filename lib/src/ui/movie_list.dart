@@ -14,10 +14,13 @@ class MovieList extends StatefulWidget {
 class MovieListState extends State<MovieList> {
   ScrollController _controller;
 
+  int page = 1;
+
   _scrollController() {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
-      bloc.fetchAllMovies();
+      page += 1;
+      bloc.fetchAllMovies(page);
     }
   }
 
@@ -26,7 +29,7 @@ class MovieListState extends State<MovieList> {
     super.initState();
     _controller = ScrollController();
     _controller.addListener(_scrollController);
-    bloc.fetchAllMovies();
+    bloc.fetchAllMovies(page);
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'package:bloc/src/model/credit_model.dart';
+import 'package:bloc/src/model/review_model.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
@@ -56,7 +58,7 @@ class MovieDetailState extends State<MovieDetail> {
   @override
   void didChangeDependencies() {
     bloc = MovieDetailBlocProvider.of(context);
-    bloc.fetchTrailersById(movieId);
+    bloc.fetchDataById(movieId);
     super.didChangeDependencies();
   }
 
@@ -158,22 +160,44 @@ class MovieDetailState extends State<MovieDetail> {
               ),
             ),
             trailers(),
+            Container(
+              margin: EdgeInsets.only(
+                top: 8.0,
+                bottom: 8.0,
+              ),
+            ),
+            Text(
+              "Cast",
+              style: TextStyle(
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            cast(),
+            Text(
+              "Reviews",
+              style: TextStyle(
+                fontSize: 25.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            reviews(),
           ],
         ),
       ),
     );
   }
 
-  StreamBuilder<Future<TrailerModel>> trailers() {
+  StreamBuilder<Future<CreditModel>> cast() {
     return StreamBuilder(
-      stream: bloc.movieTrailers,
-      builder: (context, AsyncSnapshot<Future<TrailerModel>> snapshot) {
+      stream: bloc.movieCredits,
+      builder: (context, AsyncSnapshot<Future<CreditModel>> snapshot) {
         if (snapshot.hasData) {
           return FutureBuilder(
             future: snapshot.data,
-            builder: (context, AsyncSnapshot<TrailerModel> itemSnapShot) {
+            builder: (context, AsyncSnapshot<CreditModel> itemSnapShot) {
               if (itemSnapShot.hasData) {
-                return inflateLayout(itemSnapShot.data);
+                return inflateCastLayout(itemSnapShot.data);
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -186,7 +210,51 @@ class MovieDetailState extends State<MovieDetail> {
     );
   }
 
-  Widget noTrailer(TrailerModel data) {
+  StreamBuilder<Future<ReviewModel>> reviews() {
+    return StreamBuilder(
+      stream: bloc.movieReviews,
+      builder: (context, AsyncSnapshot<Future<ReviewModel>> snapshot) {
+        if (snapshot.hasData) {
+          return FutureBuilder(
+            future: snapshot.data,
+            builder: (context, AsyncSnapshot<ReviewModel> itemSnapShot) {
+              if (itemSnapShot.hasData) {
+                return inflateReviewLayout(itemSnapShot.data);
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  StreamBuilder<Future<TrailerModel>> trailers() {
+    return StreamBuilder(
+      stream: bloc.movieTrailers,
+      builder: (context, AsyncSnapshot<Future<TrailerModel>> snapshot) {
+        if (snapshot.hasData) {
+          return FutureBuilder(
+            future: snapshot.data,
+            builder: (context, AsyncSnapshot<TrailerModel> itemSnapShot) {
+              if (itemSnapShot.hasData) {
+                return inflateTrailerLayout(itemSnapShot.data);
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          );
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Widget noTrailer() {
     return Center(
       child: Container(
         child: Text("No trailer available"),
@@ -194,7 +262,31 @@ class MovieDetailState extends State<MovieDetail> {
     );
   }
 
-  Widget inflateLayout(TrailerModel data) {
+  Widget noReview() {
+    return Center(
+      child: Container(
+        child: Text("No reviews available"),
+      ),
+    );
+  }
+
+  Widget inflateCastLayout(CreditModel data) {
+    if (data.cast.length > 0) {
+      return castLayout(data.cast);
+    } else {
+      return noReview();
+    }
+  }
+
+  Widget inflateReviewLayout(ReviewModel data) {
+    if (data.results.length > 0) {
+      return reviewLayout(data.results);
+    } else {
+      return noReview();
+    }
+  }
+
+  Widget inflateTrailerLayout(TrailerModel data) {
     List<TrailerData> trailerData = List<TrailerData>();
 
     if (data.results.length > 0) {
@@ -208,14 +300,72 @@ class MovieDetailState extends State<MovieDetail> {
     if (trailerData.length > 0) {
       return trailerLayout(trailerData);
     } else {
-      return noTrailer(data);
+      return noTrailer();
     }
+  }
+
+  Widget castLayout(List<CastData> data) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 1 / 2,
+      ),
+      scrollDirection: Axis.vertical,
+      itemCount: data.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          child: Column(
+            children: <Widget>[
+              Card(
+                child: GridTile(
+                  child: Image.network(
+                    "https://image.tmdb.org/t/p/w185${data[index].profile_path}",
+                    fit: BoxFit.cover,
+                    height: 180,
+                  ),
+                ),
+              ),
+              Text(
+                "${data[index].name}\nas\n${data[index].character}",
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget reviewLayout(List<ReviewData> data) {
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      itemCount: data.length,
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          child: Column(
+            children: <Widget>[
+              Text(
+                data[index].author,
+              ),
+              Text(
+                data[index].content,
+              )
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget trailerLayout(List<TrailerData> data) {
     return Container(
-      height: 200.0,
+      height: 180,
       child: ListView.builder(
+        shrinkWrap: true,
         scrollDirection: Axis.horizontal,
         itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
