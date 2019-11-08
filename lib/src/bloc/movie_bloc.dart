@@ -26,5 +26,3 @@ class MovieBloc {
     _totalItemsModel.results.addAll(itemModel.results);
   }
 }
-
-final bloc = MovieBloc();

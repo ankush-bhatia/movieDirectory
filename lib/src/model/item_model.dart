@@ -32,7 +32,7 @@ class MovieData {
   bool _video;
   dynamic _vote_average;
   String _title;
-  double _popularity;
+  dynamic _popularity;
   String _poster_path;
   String _original_language;
   String _original_title;
@@ -77,7 +77,7 @@ class MovieData {
 
   String get poster_path => _poster_path;
 
-  double get popularity => _popularity;
+  dynamic get popularity => _popularity;
 
   String get title => _title;
 

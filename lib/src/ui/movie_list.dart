@@ -16,6 +16,8 @@ class MovieListState extends State<MovieList> {
 
   int page = 1;
 
+  MovieBloc bloc;
+
   _scrollController() {
     if (_controller.offset >= _controller.position.maxScrollExtent &&
         !_controller.position.outOfRange) {
@@ -27,6 +29,8 @@ class MovieListState extends State<MovieList> {
   @override
   void initState() {
     super.initState();
+
+    bloc = MovieBloc();
     _controller = ScrollController();
     _controller.addListener(_scrollController);
     bloc.fetchAllMovies(page);

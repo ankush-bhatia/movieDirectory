@@ -83,10 +83,10 @@ class MovieDetailState extends State<MovieDetail> {
                 pinned: true,
                 elevation: 0.0,
                 flexibleSpace: FlexibleSpaceBar(
-                  title: Text(
+                  /* title: Text(
                     title,
                   ),
-                  centerTitle: false,
+                  centerTitle: false,*/
                   background: Image.network(
                     "https://image.tmdb.org/t/p/w500$posterUrl",
                     fit: BoxFit.cover,
@@ -167,7 +167,7 @@ class MovieDetailState extends State<MovieDetail> {
               ),
             ),
             Text(
-              "Cast",
+              "Main Cast",
               style: TextStyle(
                 fontSize: 25.0,
                 fontWeight: FontWeight.bold,
@@ -318,12 +318,15 @@ class MovieDetailState extends State<MovieDetail> {
         return Container(
           child: Column(
             children: <Widget>[
-              Card(
-                child: GridTile(
-                  child: Image.network(
-                    "https://image.tmdb.org/t/p/w185${data[index].profile_path}",
-                    fit: BoxFit.cover,
-                    height: 180,
+              Flexible(
+                flex: 1,
+                child: Card(
+                  child: GridTile(
+                    child: Image.network(
+                      "https://image.tmdb.org/t/p/w185${data[index].profile_path}",
+                      fit: BoxFit.cover,
+                      height: 180,
+                    ),
                   ),
                 ),
               ),
@@ -348,8 +351,19 @@ class MovieDetailState extends State<MovieDetail> {
         return Container(
           child: Column(
             children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(
+                  top: 8.0,
+                  bottom: 8.0,
+                ),
+              ),
               Text(
                 data[index].author,
+                style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 data[index].content,

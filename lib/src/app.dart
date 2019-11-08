@@ -1,6 +1,7 @@
+import 'package:bloc/src/bloc/MovieHomeBlocProvider.dart';
+import 'package:bloc/src/ui/movie_home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'ui/movie_list.dart';
 
 class App extends StatelessWidget {
   @override
@@ -8,7 +9,9 @@ class App extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.dark(),
       home: Scaffold(
-        body: MovieList(),
+        body: MovieHomeBlocProvider(
+          child: MovieHome(),
+        ),
       ),
     );
   }
