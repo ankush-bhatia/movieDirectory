@@ -1,4 +1,4 @@
-import 'package:bloc/src/bloc/MovieHomeBlocProvider.dart';
+import 'package:bloc/src/bloc/movie_home_bloc_provider.dart';
 import 'package:bloc/src/ui/movie_home.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

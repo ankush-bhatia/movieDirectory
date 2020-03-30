@@ -1,4 +1,4 @@
-import 'package:bloc/src/bloc/MovieHomeBloc.dart';
+import 'package:bloc/src/bloc/movie_home_bloc.dart';
 import 'package:flutter/cupertino.dart';
 
 class MovieHomeBlocProvider extends InheritedWidget {
@@ -14,7 +14,7 @@ class MovieHomeBlocProvider extends InheritedWidget {
   }
 
   static MovieHomeBloc of(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(MovieHomeBlocProvider)
+    return (context.dependOnInheritedWidgetOfExactType()
             as MovieHomeBlocProvider)
         .bloc;
   }

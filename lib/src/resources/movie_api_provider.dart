@@ -10,11 +10,10 @@ import '../model/item_model.dart';
 
 class MovieApiProvider {
   Client client = Client();
-  final _apiKey = '552dd57560ca7112effd947102373b57';
+  final _apiKey = 'a7f1243431540ff546e5ccebe0415843';
   final _baseUrl = "https://api.themoviedb.org/3/movie";
 
   Future<ItemModel> fetchMovieList(int page) async {
-    print("Entered");
     final response =
         await client.get("$_baseUrl/popular?api_key=$_apiKey&page=$page");
 
@@ -63,6 +62,18 @@ class MovieApiProvider {
       return CreditModel.fromJson(json.decode(response.body));
     } else {
       throw Exception("Filed to load credits");
+    }
+  }
+
+  Future<ItemModel> fetchCurrentPlayingMovies() async {
+    final response = await client.get("$_baseUrl/now_playing?api_key=$_apiKey");
+
+    print(response.body.toString());
+
+    if (response.statusCode == 200) {
+      return ItemModel.fromJson(json.decode(response.body));
+    } else {
+      throw Exception("Filed to load popular images");
     }
   }
 }

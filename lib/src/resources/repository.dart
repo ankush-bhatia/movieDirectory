@@ -21,4 +21,7 @@ class Repository {
 
   Future<CreditModel> fetchCredits(int movieId) =>
       movieApiProvider.fetchCredits(movieId);
+
+  Future<ItemModel> fetchCurrentPlayingMovies() =>
+      movieApiProvider.fetchCurrentPlayingMovies();
 }

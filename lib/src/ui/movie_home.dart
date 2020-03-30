@@ -1,8 +1,8 @@
-import 'package:bloc/src/bloc/MovieHomeBloc.dart';
-import 'package:bloc/src/bloc/MovieHomeBlocProvider.dart';
+import 'package:bloc/src/bloc/movie_home_bloc.dart';
 import 'package:bloc/src/ui/movie_list.dart';
-import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/material.dart';
+import '../model/item_model.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class MovieHome extends StatefulWidget {
   @override
@@ -25,18 +25,16 @@ class MovieHomeState extends State<MovieHome> {
         bottom: true,
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 200,
-              child: Carousel(
-                images: [
-                  NetworkImage(
-                      'https://cdn-images-1.medium.com/max/2000/1*GqdzzfB_BHorv7V2NV7Jgg.jpeg'),
-                  NetworkImage(
-                      'https://cdn-images-1.medium.com/max/2000/1*wnIEgP1gNMrK5gZU7QS0-A.jpeg'),
-                ],
-                indicatorBgPadding: 2,
-              ),
-            ),
+            StreamBuilder(
+                stream: bloc.allMovies,
+                builder: (context, AsyncSnapshot<TotalItemsModel> snapshot) {
+                  if (snapshot.hasData) {
+                    return buildCarousel(snapshot);
+                  } else if (snapshot.hasError) {
+                    return Text(snapshot.error.toString());
+                  }
+                  return Center(child: CircularProgressIndicator());
+                }),
             RaisedButton(
               onPressed: () => openPopularMovieListing(),
               child: Text(
@@ -51,13 +49,15 @@ class MovieHomeState extends State<MovieHome> {
 
   @override
   void dispose() {
+    bloc.dispose();
     super.dispose();
   }
 
   @override
-  void didChangeDependencies() {
-    bloc = MovieHomeBlocProvider.of(context);
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    bloc = MovieHomeBloc();
+    bloc.fetchCurrentPlaying();
   }
 
   openPopularMovieListing() {
@@ -67,5 +67,19 @@ class MovieHomeState extends State<MovieHome> {
         return MovieList();
       }),
     );
+  }
+
+  Widget buildCarousel(AsyncSnapshot<TotalItemsModel> snapshot) {
+    return CarouselSlider.builder(
+        autoPlay: true,
+        enlargeCenterPage: true,
+        itemCount: snapshot.data.results.length,
+        itemBuilder: (BuildContext context, int itemIndex) {
+          return Image.network(
+            'https://image.tmdb.org/t/p/w500${snapshot.data.results[itemIndex].poster_path}',
+            width: 400,
+            fit: BoxFit.fitWidth,
+          );
+        });
   }
 }
